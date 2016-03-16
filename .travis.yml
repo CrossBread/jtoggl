@@ -19,7 +19,7 @@ deploy:
   api_key: $GITHUB_TOKEN
   file:
     - $HOME/m2repo.zip
-    - build/libs/jtoggl-jackson-2.0.1-SNAPSHOT.jar
+    - TRAVIS_BUILD_DIR/build/libs/jtoggl-jackson-2.0.1-SNAPSHOT.jar
   skip_cleanup: true
   on:
     tags: true
