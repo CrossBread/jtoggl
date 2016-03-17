@@ -16,7 +16,7 @@
         /* "licenses": ["MIT"], */
         "labels": ["toggl", "client", "api"],
         "public_download_numbers": true,
-        "public_stats": true,
+        "public_stats": true
     },
 
     /* Package version information.
