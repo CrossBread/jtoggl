@@ -7,13 +7,12 @@
         "name": "jtoggl", // Bintray package name
         "repo": "maven", // Bintray repository name
         "subject": "konikvranik", // Bintray subject (user or organization)
-        "desc": "I was pushed completely automatically",
+        "desc": "Library for communicating with Toggl over official API. First number in version of this library reflects Toggl API version.",
         "website_url": "https://github.com/konikvranik/jtoggl",
         "issue_tracker_url": "https://github.com/konikvranik/jtoggl/issues",
         "vcs_url": "https://github.com/konikvranik/jtoggl.git",
         "github_use_tag_release_notes": true,
         "github_release_notes_file": "RELEASE.txt",
-        "licenses": ["MIT"],
         "labels": ["toggl", "client", "api"],
         "public_download_numbers": true,
         "public_stats": true
@@ -23,8 +22,8 @@
        In case the version already exists on Bintray, only the name fields is mandatory. */
 
     "version": {
-        "name": "0.5",
-        "desc": "This is a version",
+        "name": "8.0.0-SNAPSHOT",
+        "desc": "Development version",
         "released": "2016-03-15",
         "vcs_tag": "fixed-tests",
         "gpgSign": false
@@ -48,7 +47,7 @@
 
     "files":
         [
-        {"includePattern": "build/libs/(jtoggl-(.*).jar)", "excludePattern": ".*/do-not-deploy/.*", "uploadPattern": "maven/ch/simas/jtoggl/jtoggl/$2"}
+        {"includePattern": "/home/travis/build/konikvranik/jtoggl/build/libs/(jtoggl-(.*).jar)", "excludePattern": ".*/do-not-deploy/.*", "uploadPattern": "maven/ch/simas/jtoggl/jtoggl/$2/$1"}
         ],
     "publish": true
 }
