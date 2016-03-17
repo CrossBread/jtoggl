@@ -25,7 +25,7 @@ deploy:
   #    tags: true
   - provider: bintray
     skip_cleanup: true
-    file: ".bintray.json"
+    file: "$TRAVIS_BUILD_DIR/.bintray.json"
     user: "konikvranik"
     key: "57cbdbcc0ee46556d56eebd61c1c068b362f3925"
     on:
