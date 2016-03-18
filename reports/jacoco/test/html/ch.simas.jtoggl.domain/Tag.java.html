@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Tag.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jtoggl</a> &gt; <a href="index.source.html" class="el_package">ch.simas.jtoggl.domain</a> &gt; <span class="el_source">Tag.java</span></div><h1>Tag.java</h1><pre class="source lang-java linenums">
+/*
+ * jtoggl - Java Wrapper for Toggl REST API https://www.toggl.com/public/api
+ *
+ * Copyright (C) 2011 by simas GmbH, Moosentli 7, 3235 Erlach, Switzerland
+ * http://www.simas.ch
+ * 
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ch.simas.jtoggl.domain;
+
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
+
+/**
+ * Toggl Tag representation.
+ *
+ * @author Simon Martinelli
+ */
+@JsonRootName(&quot;tag&quot;)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Tag implements Cloneable, WithWorkspace, WithId {
+
+    @JsonProperty(&quot;id&quot;)
+    private Long id;
+    @JsonProperty(&quot;name&quot;)
+    private String name;
+    private Workspace workspace;
+    @JsonProperty(&quot;wid&quot;)
+    private Long wid;
+    private Long workspaceId;
+
+<span class="nc" id="L45">    public Tag() {</span>
+<span class="nc" id="L46">    }</span>
+
+    public Long getId() {
+<span class="nc" id="L49">        return id;</span>
+    }
+
+    public void setId(Long id) {
+<span class="nc" id="L53">        this.id = id;</span>
+<span class="nc" id="L54">    }</span>
+
+    public String getName() {
+<span class="nc" id="L57">        return name;</span>
+    }
+
+    public void setName(String name) {
+<span class="nc" id="L61">        this.name = name;</span>
+<span class="nc" id="L62">    }</span>
+
+    public Workspace getWorkspace() {
+<span class="nc" id="L65">        return workspace;</span>
+    }
+
+    public void setWorkspace(Workspace workspace) {
+<span class="nc" id="L69">        this.workspace = workspace;</span>
+<span class="nc" id="L70">    }</span>
+
+    @Override
+    public Long getWorkspaceId() {
+<span class="nc" id="L74">        return workspaceId;</span>
+    }
+
+    @Override
+    public void setWorkspaceId(Long workspaceId) {
+<span class="nc" id="L79">        this.workspaceId = workspaceId;</span>
+<span class="nc" id="L80">    }</span>
+
+
+    @Override
+    public String toString() {
+<span class="nc" id="L85">        return &quot;Tag{&quot; + &quot;id=&quot; + id + &quot;, name=&quot; + name + &quot;, workspace=&quot; + workspace + '}';</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if (obj == null) {</span>
+<span class="nc" id="L91">            return false;</span>
+        }
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        if (getClass() != obj.getClass()) {</span>
+<span class="nc" id="L94">            return false;</span>
+        }
+<span class="nc" id="L96">        final Tag other = (Tag) obj;</span>
+<span class="nc bnc" id="L97" title="All 6 branches missed.">        if (this.id != other.id &amp;&amp; (this.id == null || !this.id.equals(other.id))) {</span>
+<span class="nc" id="L98">            return false;</span>
+        }
+<span class="nc" id="L100">        return true;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L105">        int hash = 3;</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        hash = 97 * hash + (this.id != null ? this.id.hashCode() : 0);</span>
+<span class="nc" id="L107">        return hash;</span>
+    }
+
+    public Long getWid() {
+<span class="nc" id="L111">        return wid;</span>
+    }
+
+    public void setWid(Long wid) {
+<span class="nc" id="L115">        this.wid = wid;</span>
+<span class="nc" id="L116">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>

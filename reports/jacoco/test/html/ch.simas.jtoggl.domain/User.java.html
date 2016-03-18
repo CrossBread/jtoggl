@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jtoggl</a> &gt; <a href="index.source.html" class="el_package">ch.simas.jtoggl.domain</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">/*
+ * jtoggl - Java Wrapper for Toggl REST API https://www.toggl.com/public/api
+ *
+ * Copyright (C) 2011 by simas GmbH, Moosentli 7, 3235 Erlach, Switzerland
+ * http://www.simas.ch
+ * 
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ch.simas.jtoggl.domain;
+
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
+
+
+/**
+ * Toggl User representation.
+ *
+ * @author Simon Martinelli
+ */
+@JsonRootName(&quot;user&quot;)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class User implements Cloneable, WithId {
+
+    @JsonProperty(&quot;id&quot;)
+    private Long id;
+    @JsonProperty(&quot;jquery_timeofday_format&quot;)
+    private String jqueryTimeOfDayFormat;
+    @JsonProperty(&quot;api_token&quot;)
+    private String apiToken;
+    @JsonProperty(&quot;retention&quot;)
+    private Long timeEntryRetentionDays;
+    @JsonProperty(&quot;jquery_date_format&quot;)
+    private String jqueryDateFormat;
+    @JsonProperty(&quot;date_format&quot;)
+    private String dateFormat;
+    @JsonProperty(&quot;default_wid&quot;)
+    private Long defaultWorkspaceId;
+    @JsonProperty(&quot;fullname&quot;)
+    private String fullname;
+    @JsonProperty(&quot;language&quot;)
+    private String language;
+    @JsonProperty(&quot;beginning_of_week&quot;)
+    private Long beginningOfWeek;
+    @JsonProperty(&quot;timeofday_format&quot;)
+    private String timeofdayFormat;
+    @JsonProperty(&quot;email&quot;)
+    private String email;
+    @JsonProperty(&quot;timezone&quot;)
+    private String timezone;
+    @JsonProperty(&quot;store_start_and_stop_time&quot;)
+    private Boolean storeStartAndStopTime;
+
+<span class="fc" id="L65">    public User() {</span>
+<span class="fc" id="L66">    }</span>
+
+    public String getApiToken() {
+<span class="nc" id="L69">        return apiToken;</span>
+    }
+
+    public void setApiToken(String apiToken) {
+<span class="fc" id="L73">        this.apiToken = apiToken;</span>
+<span class="fc" id="L74">    }</span>
+
+    public Long getBeginningOfWeek() {
+<span class="nc" id="L77">        return beginningOfWeek;</span>
+    }
+
+    public void setBeginningOfWeek(Long beginningOfWeek) {
+<span class="fc" id="L81">        this.beginningOfWeek = beginningOfWeek;</span>
+<span class="fc" id="L82">    }</span>
+
+    public String getDateFormat() {
+<span class="nc" id="L85">        return dateFormat;</span>
+    }
+
+    public void setDateFormat(String dateFormat) {
+<span class="fc" id="L89">        this.dateFormat = dateFormat;</span>
+<span class="fc" id="L90">    }</span>
+
+    public Long getDefaultWorkspaceId() {
+<span class="nc" id="L93">        return defaultWorkspaceId;</span>
+    }
+
+    public void setDefaultWorkspaceId(Long defaultWorkspaceId) {
+<span class="fc" id="L97">        this.defaultWorkspaceId = defaultWorkspaceId;</span>
+<span class="fc" id="L98">    }</span>
+
+    public String getEmail() {
+<span class="nc" id="L101">        return email;</span>
+    }
+
+    public void setEmail(String email) {
+<span class="fc" id="L105">        this.email = email;</span>
+<span class="fc" id="L106">    }</span>
+
+    public String getFullname() {
+<span class="nc" id="L109">        return fullname;</span>
+    }
+
+    public void setFullname(String fullname) {
+<span class="fc" id="L113">        this.fullname = fullname;</span>
+<span class="fc" id="L114">    }</span>
+
+    public Long getId() {
+<span class="nc" id="L117">        return id;</span>
+    }
+
+    public void setId(Long id) {
+<span class="fc" id="L121">        this.id = id;</span>
+<span class="fc" id="L122">    }</span>
+
+    public String getJqueryDateFormat() {
+<span class="nc" id="L125">        return jqueryDateFormat;</span>
+    }
+
+    public void setJqueryDateFormat(String jqueryDateFormat) {
+<span class="fc" id="L129">        this.jqueryDateFormat = jqueryDateFormat;</span>
+<span class="fc" id="L130">    }</span>
+
+    public String getJqueryTimeOfDayFormat() {
+<span class="nc" id="L133">        return jqueryTimeOfDayFormat;</span>
+    }
+
+    public void setJqueryTimeOfDayFormat(String jqueryTimeOfDayFormat) {
+<span class="fc" id="L137">        this.jqueryTimeOfDayFormat = jqueryTimeOfDayFormat;</span>
+<span class="fc" id="L138">    }</span>
+
+    public String getLanguage() {
+<span class="nc" id="L141">        return language;</span>
+    }
+
+    public void setLanguage(String language) {
+<span class="fc" id="L145">        this.language = language;</span>
+<span class="fc" id="L146">    }</span>
+
+    public Long getTimeEntryRetentionDays() {
+<span class="nc" id="L149">        return timeEntryRetentionDays;</span>
+    }
+
+    public void setTimeEntryRetentionDays(Long timeEntryRetentionDays) {
+<span class="fc" id="L153">        this.timeEntryRetentionDays = timeEntryRetentionDays;</span>
+<span class="fc" id="L154">    }</span>
+
+    public String getTimeofdayFormat() {
+<span class="nc" id="L157">        return timeofdayFormat;</span>
+    }
+
+    public String getTimezone() {
+<span class="fc" id="L161">        return timezone;</span>
+    }
+
+    public void setTimeofdayFormat(String timeofdayFormat) {
+<span class="fc" id="L165">        this.timeofdayFormat = timeofdayFormat;</span>
+<span class="fc" id="L166">    }</span>
+
+    public Boolean getStoreStartAndStopTime() {
+<span class="nc" id="L169">        return storeStartAndStopTime;</span>
+    }
+
+    public void setStoreStartAndStopTime(Boolean storeStartAndStopTime) {
+<span class="fc" id="L173">        this.storeStartAndStopTime = storeStartAndStopTime;</span>
+<span class="fc" id="L174">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L178">        return &quot;User{&quot; + &quot;id=&quot; + id + &quot;, jqueryTimeOfDayFormat=&quot; + jqueryTimeOfDayFormat + &quot;, apiToken=&quot; +</span>
+                apiToken + &quot;, timeEntryRetentionDays=&quot; + timeEntryRetentionDays + &quot;, jqueryDateFormat=&quot; +
+                jqueryDateFormat + &quot;, dateFormat=&quot; + dateFormat + &quot;, defaultWorkspaceId=&quot; +
+                defaultWorkspaceId + &quot;, fullname=&quot; + fullname + &quot;, language=&quot; + language + &quot;, beginningOfWeek=&quot; +
+                beginningOfWeek + &quot;, timeofdayFormat=&quot; + timeofdayFormat + &quot;, email=&quot; + email + '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L187" title="All 2 branches missed.">        if (obj == null) {</span>
+<span class="nc" id="L188">            return false;</span>
+        }
+<span class="nc bnc" id="L190" title="All 2 branches missed.">        if (getClass() != obj.getClass()) {</span>
+<span class="nc" id="L191">            return false;</span>
+        }
+<span class="nc" id="L193">        final User other = (User) obj;</span>
+<span class="nc bnc" id="L194" title="All 6 branches missed.">        if (this.id != other.id &amp;&amp; (this.id == null || !this.id.equals(other.id))) {</span>
+<span class="nc" id="L195">            return false;</span>
+        }
+<span class="nc" id="L197">        return true;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L202">        int hash = 5;</span>
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">        hash = 97 * hash + (this.id != null ? this.id.hashCode() : 0);</span>
+<span class="fc" id="L204">        return hash;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>

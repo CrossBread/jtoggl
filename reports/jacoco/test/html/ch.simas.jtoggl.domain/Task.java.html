@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Task.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jtoggl</a> &gt; <a href="index.source.html" class="el_package">ch.simas.jtoggl.domain</a> &gt; <span class="el_source">Task.java</span></div><h1>Task.java</h1><pre class="source lang-java linenums">/*
+ * jtoggl - Java Wrapper for Toggl REST API https://www.toggl.com/public/api
+ *
+ * Copyright (C) 2011 by simas GmbH, Moosentli 7, 3235 Erlach, Switzerland
+ * http://www.simas.ch
+ * 
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ch.simas.jtoggl.domain;
+
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
+
+/**
+ * Toggl Task representation. Only for purchased Toggl version.
+ *
+ * @author Simon Martinelli
+ */
+@JsonRootName(&quot;task&quot;)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Task implements Cloneable, WithWorkspace, WithUser, WithProject, WithId {
+
+    @JsonProperty(&quot;id&quot;)
+    private Long id;
+    @JsonProperty(&quot;name&quot;)
+    private String name;
+    @JsonProperty(&quot;estimated_seconds&quot;)
+    private Long estimatedSeconds;
+    @JsonProperty(&quot;active&quot;)
+    private Boolean active;
+    private Workspace workspace;
+    private Project project;
+    private User user;
+    @JsonProperty(&quot;pid&quot;)
+    private Long projectId;
+    @JsonProperty(&quot;wid&quot;)
+    private Long workspaceId;
+    private Long userId;
+
+<span class="nc" id="L52">    public Task() {</span>
+<span class="nc" id="L53">    }</span>
+
+    public Long getEstimatedSeconds() {
+<span class="nc" id="L56">        return estimatedSeconds;</span>
+    }
+
+    public void setEstimatedSeconds(Long estimatedSeconds) {
+<span class="nc" id="L60">        this.estimatedSeconds = estimatedSeconds;</span>
+<span class="nc" id="L61">    }</span>
+
+    public Long getId() {
+<span class="nc" id="L64">        return id;</span>
+    }
+
+    public void setId(Long id) {
+<span class="nc" id="L68">        this.id = id;</span>
+<span class="nc" id="L69">    }</span>
+
+    public Boolean isIs_active() {
+<span class="nc" id="L72">        return active;</span>
+    }
+
+    public void setActive(Boolean active) {
+<span class="nc" id="L76">        this.active = active;</span>
+<span class="nc" id="L77">    }</span>
+
+    public String getName() {
+<span class="nc" id="L80">        return name;</span>
+    }
+
+    public void setName(String name) {
+<span class="nc" id="L84">        this.name = name;</span>
+<span class="nc" id="L85">    }</span>
+
+    @Override
+    public Project getProject() {
+<span class="nc" id="L89">        return project;</span>
+    }
+
+    @Override
+    public void setProject(Project project) {
+<span class="nc" id="L94">        this.project = project;</span>
+<span class="nc" id="L95">    }</span>
+
+    public User getUser() {
+<span class="nc" id="L98">        return user;</span>
+    }
+
+    public void setUser(User user) {
+<span class="nc" id="L102">        this.user = user;</span>
+<span class="nc" id="L103">    }</span>
+
+    @Override
+    public Long getUserId() {
+<span class="nc" id="L107">        return userId;</span>
+    }
+
+    @Override
+    public void setUserId(Long userId) {
+<span class="nc" id="L112">        this.userId = userId;</span>
+<span class="nc" id="L113">    }</span>
+
+    public Workspace getWorkspace() {
+<span class="nc" id="L116">        return workspace;</span>
+    }
+
+    public void setWorkspace(Workspace workspace) {
+<span class="nc" id="L120">        this.workspace = workspace;</span>
+<span class="nc" id="L121">    }</span>
+
+
+    @Override
+    public String toString() {
+<span class="nc" id="L126">        return &quot;Task{&quot; + &quot;id=&quot; + id + &quot;, name=&quot; + name + &quot;, estimatedSeconds=&quot; + estimatedSeconds + &quot;, active=&quot;</span>
+                + active + &quot;, workspace=&quot; + workspace + &quot;, project=&quot; + project + &quot;, user=&quot; + user + '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        if (obj == null) {</span>
+<span class="nc" id="L133">            return false;</span>
+        }
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        if (getClass() != obj.getClass()) {</span>
+<span class="nc" id="L136">            return false;</span>
+        }
+<span class="nc" id="L138">        final Task other = (Task) obj;</span>
+<span class="nc bnc" id="L139" title="All 6 branches missed.">        if (this.id != other.id &amp;&amp; (this.id == null || !this.id.equals(other.id))) {</span>
+<span class="nc" id="L140">            return false;</span>
+        }
+<span class="nc" id="L142">        return true;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L147">        int hash = 7;</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        hash = 31 * hash + (this.id != null ? this.id.hashCode() : 0);</span>
+<span class="nc" id="L149">        return hash;</span>
+    }
+
+    @Override
+    public Task clone() {
+<span class="nc" id="L154">        Task tk = new Task();</span>
+<span class="nc" id="L155">        tk.id = id;</span>
+<span class="nc" id="L156">        tk.name = name;</span>
+<span class="nc" id="L157">        tk.estimatedSeconds = estimatedSeconds;</span>
+<span class="nc" id="L158">        tk.active = active;</span>
+<span class="nc" id="L159">        tk.workspace = workspace;</span>
+<span class="nc" id="L160">        tk.project = project;</span>
+<span class="nc" id="L161">        tk.user = user;</span>
+<span class="nc" id="L162">        return tk;</span>
+    }
+
+    public Long getProjectId() {
+<span class="nc" id="L166">        return projectId;</span>
+    }
+
+    public void setProjectId(Long projectId) {
+<span class="nc" id="L170">        this.projectId = projectId;</span>
+<span class="nc" id="L171">    }</span>
+
+    public Long getWorkspaceId() {
+<span class="nc" id="L174">        return workspaceId;</span>
+    }
+
+    public void setWorkspaceId(Long workspaceId) {
+<span class="nc" id="L178">        this.workspaceId = workspaceId;</span>
+<span class="nc" id="L179">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>

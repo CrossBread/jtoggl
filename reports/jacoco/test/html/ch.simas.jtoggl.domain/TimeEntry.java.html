@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TimeEntry.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jtoggl</a> &gt; <a href="index.source.html" class="el_package">ch.simas.jtoggl.domain</a> &gt; <span class="el_source">TimeEntry.java</span></div><h1>TimeEntry.java</h1><pre class="source lang-java linenums">/*
+ * jtoggl - Java Wrapper for Toggl REST API https://www.toggl.com/public/api
+ *
+ * Copyright (C) 2011 by simas GmbH, Moosentli 7, 3235 Erlach, Switzerland
+ * http://www.simas.ch
+ * 
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ch.simas.jtoggl.domain;
+
+import ch.simas.jtoggl.CustomDateDeserializer;
+import ch.simas.jtoggl.CustomDateSerializer;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.joda.time.DateTime;
+
+import java.util.List;
+
+
+/**
+ * Toggl time entry representation.
+ *
+ * @author Simon Martinelli
+ */
+@JsonRootName(&quot;time_entry&quot;)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class TimeEntry implements Cloneable, WithWorkspace, WithId, WithProject {
+
+    @JsonProperty(&quot;id&quot;)
+    private Long id;
+    @JsonProperty(&quot;description&quot;)
+    private String description;
+    private Project project;
+    @JsonProperty(&quot;start&quot;)
+    @JsonSerialize(using = CustomDateSerializer.class)
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    private DateTime start;
+    @JsonProperty(&quot;stop&quot;)
+    @JsonSerialize(using = CustomDateSerializer.class)
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    private DateTime stop;
+    @JsonProperty(&quot;duration&quot;)
+    private long duration;
+    @JsonProperty(&quot;billable&quot;)
+    private Boolean billable;
+    private Workspace workspace;
+    @JsonProperty(&quot;tags&quot;)
+    private List&lt;String&gt; tags;//= new ArrayList&lt;String&gt;();
+    @JsonProperty(&quot;created_with&quot;)
+    private String createdWith;
+    @JsonProperty(&quot;duronly&quot;)
+    private Boolean durationOnly;
+    @JsonProperty(&quot;pid&quot;)
+    private Long projectId;
+    @JsonProperty(&quot;wid&quot;)
+    private Long workspaceId;
+    @JsonProperty(&quot;tid&quot;)
+    private Long taskId;
+
+<span class="fc" id="L73">    public TimeEntry() {</span>
+<span class="fc" id="L74">    }</span>
+
+    public Boolean isBillable() {
+<span class="fc" id="L77">        return billable;</span>
+    }
+
+    public void setBillable(Boolean billable) {
+<span class="fc" id="L81">        this.billable = billable;</span>
+<span class="fc" id="L82">    }</span>
+
+    public String getDescription() {
+<span class="fc" id="L85">        return description;</span>
+    }
+
+    public void setDescription(String description) {
+<span class="fc" id="L89">        this.description = description;</span>
+<span class="fc" id="L90">    }</span>
+
+    public long getDuration() {
+<span class="fc" id="L93">        return duration;</span>
+    }
+
+    public void setDuration(long duration) {
+<span class="fc" id="L97">        this.duration = duration;</span>
+<span class="fc" id="L98">    }</span>
+
+    @Override
+    public Long getId() {
+<span class="fc" id="L102">        return id;</span>
+    }
+
+    @Override
+    public void setId(Long id) {
+<span class="fc" id="L107">        this.id = id;</span>
+<span class="fc" id="L108">    }</span>
+
+    public Boolean getDurationOnly() {
+<span class="fc" id="L111">        return durationOnly;</span>
+    }
+
+    public void setDurationOnly(Boolean durationOnly) {
+<span class="fc" id="L115">        this.durationOnly = durationOnly;</span>
+<span class="fc" id="L116">    }</span>
+
+    public Project getProject() {
+<span class="fc" id="L119">        return project;</span>
+    }
+
+    public void setProject(Project project) {
+<span class="fc" id="L123">        this.project = project;</span>
+<span class="fc" id="L124">    }</span>
+
+    public DateTime getStart() {
+<span class="fc" id="L127">        return start;</span>
+    }
+
+    public void setStart(DateTime start) {
+<span class="fc" id="L131">        this.start = start;</span>
+<span class="fc" id="L132">    }</span>
+
+    public DateTime getStop() {
+<span class="fc" id="L135">        return stop;</span>
+    }
+
+    public void setStop(DateTime stop) {
+<span class="fc" id="L139">        this.stop = stop;</span>
+<span class="fc" id="L140">    }</span>
+
+    public List&lt;String&gt; getTags() {
+<span class="fc" id="L143">        return tags;</span>
+    }
+
+    public void setTags(List&lt;String&gt; tags) {
+<span class="nc" id="L147">        this.tags = tags;</span>
+<span class="nc" id="L148">    }</span>
+
+    @Override
+    public Workspace getWorkspace() {
+<span class="fc" id="L152">        return workspace;</span>
+    }
+
+    @Override
+    public void setWorkspace(Workspace workspace) {
+<span class="fc" id="L157">        this.workspace = workspace;</span>
+<span class="fc" id="L158">    }</span>
+
+    public String getCreatedWith() {
+<span class="fc" id="L161">        return createdWith;</span>
+    }
+
+    public void setCreatedWith(String createdWith) {
+<span class="fc" id="L165">        this.createdWith = createdWith;</span>
+<span class="fc" id="L166">    }</span>
+
+    public Long getWorkspaceId() {
+<span class="fc" id="L169">        return workspaceId;</span>
+    }
+
+    public void setWorkspaceId(Long workspaceId) {
+<span class="fc" id="L173">        this.workspaceId = workspaceId;</span>
+<span class="fc" id="L174">    }</span>
+
+    @Override
+    public Long getProjectId() {
+<span class="fc" id="L178">        return projectId;</span>
+    }
+
+    @Override
+    public void setProjectId(Long projectId) {
+<span class="fc" id="L183">        this.projectId = projectId;</span>
+<span class="fc" id="L184">    }</span>
+
+    public Long getTaskId() {
+<span class="fc" id="L187">        return taskId;</span>
+    }
+
+    public void setTaskId(Long taskId) {
+<span class="nc" id="L191">        this.taskId = taskId;</span>
+<span class="nc" id="L192">    }</span>
+
+
+    @Override
+    public String toString() {
+<span class="pc bpc" id="L197" title="2 of 4 branches missed.">        return &quot;TimeEntry{&quot; + &quot;id=&quot; + id + &quot;, description=&quot; + description + &quot;, project=&quot; + project + &quot;, start=&quot; +</span>
+                (start == null ? &quot;null&quot; : start + &quot;, stop=&quot; + (stop == null ? &quot;null&quot; : stop)) + &quot;, duration=&quot; + duration + &quot;, billable=&quot; + billable + &quot;, workspace=&quot; +
+                workspace + &quot;, tags=&quot; + tags + &quot;, durationOnly=&quot; + durationOnly + &quot;, taskId = &quot; + taskId + '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L204" title="All 2 branches missed.">        if (obj == null) {</span>
+<span class="nc" id="L205">            return false;</span>
+        }
+<span class="nc bnc" id="L207" title="All 2 branches missed.">        if (getClass() != obj.getClass()) {</span>
+<span class="nc" id="L208">            return false;</span>
+        }
+<span class="nc" id="L210">        final TimeEntry other = (TimeEntry) obj;</span>
+<span class="nc bnc" id="L211" title="All 6 branches missed.">        if (this.id != other.id &amp;&amp; (this.id == null || !this.id.equals(other.id))) {</span>
+<span class="nc" id="L212">            return false;</span>
+        }
+<span class="nc" id="L214">        return true;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L219">        int hash = 3;</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">        hash = 79 * hash + (this.id != null ? this.id.hashCode() : 0);</span>
+<span class="nc" id="L221">        return hash;</span>
+    }
+
+    @Override
+    public TimeEntry clone() {
+<span class="fc" id="L226">        TimeEntry te = new TimeEntry();</span>
+<span class="fc" id="L227">        te.id = id;</span>
+<span class="fc" id="L228">        te.description = description;</span>
+<span class="fc" id="L229">        te.project = project;</span>
+<span class="fc" id="L230">        te.start = start;</span>
+<span class="fc" id="L231">        te.stop = stop;</span>
+<span class="fc" id="L232">        te.duration = duration;</span>
+<span class="fc" id="L233">        te.billable = billable;</span>
+<span class="fc" id="L234">        te.workspace = workspace;</span>
+<span class="fc" id="L235">        te.tags = tags;</span>
+<span class="fc" id="L236">        te.createdWith = createdWith;</span>
+<span class="fc" id="L237">        te.durationOnly = durationOnly;</span>
+<span class="fc" id="L238">        te.projectId = projectId;</span>
+<span class="fc" id="L239">        te.workspaceId = workspaceId;</span>
+<span class="fc" id="L240">        te.taskId = taskId;</span>
+<span class="fc" id="L241">        return te;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ProjectClient.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jtoggl</a> &gt; <a href="index.source.html" class="el_package">ch.simas.jtoggl.domain</a> &gt; <span class="el_source">ProjectClient.java</span></div><h1>ProjectClient.java</h1><pre class="source lang-java linenums">/*
+ * jtoggl - Java Wrapper for Toggl REST API https://www.toggl.com/public/api
+ *
+ * Copyright (C) 2011 by simas GmbH, Moosentli 7, 3235 Erlach, Switzerland
+ * http://www.simas.ch
+ * 
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ch.simas.jtoggl.domain;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
+
+/**
+ * Toggl Project client representation.
+ *
+ * @author Simon Martinelli
+ */
+@JsonRootName(&quot;client&quot;)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ProjectClient implements Cloneable, WithWorkspace, WithId {
+
+    @JsonProperty(&quot;id&quot;)
+    private Long id;
+    @JsonProperty(&quot;name&quot;)
+    private String name;
+    @JsonProperty(&quot;hrate&quot;)
+    private String hourlyRate;
+    @JsonProperty(&quot;cur&quot;)
+    private String currency;
+    private Workspace workspace;
+    @JsonProperty(&quot;notes&quot;)
+    private String notes;
+    @JsonProperty(&quot;wid&quot;)
+    private Long workspaceId;
+
+<span class="fc" id="L48">    public ProjectClient() {</span>
+<span class="fc" id="L49">    }</span>
+
+    public Long getId() {
+<span class="fc" id="L52">        return id;</span>
+    }
+
+    public void setId(Long id) {
+<span class="fc" id="L56">        this.id = id;</span>
+<span class="fc" id="L57">    }</span>
+
+    public String getName() {
+<span class="fc" id="L60">        return name;</span>
+    }
+
+    public void setName(String name) {
+<span class="fc" id="L64">        this.name = name;</span>
+<span class="fc" id="L65">    }</span>
+
+    public String getCurrency() {
+<span class="fc" id="L68">        return currency;</span>
+    }
+
+    public void setCurrency(String currency) {
+<span class="nc" id="L72">        this.currency = currency;</span>
+<span class="nc" id="L73">    }</span>
+
+    public String getHourlyRate() {
+<span class="fc" id="L76">        return hourlyRate;</span>
+    }
+
+    public void setHourlyRate(String hourlyRate) {
+<span class="nc" id="L80">        this.hourlyRate = hourlyRate;</span>
+<span class="nc" id="L81">    }</span>
+
+    public String getNotes() {
+<span class="fc" id="L84">        return notes;</span>
+    }
+
+    public void setNotes(String notes) {
+<span class="fc" id="L88">        this.notes = notes;</span>
+<span class="fc" id="L89">    }</span>
+
+    @Override
+    public Workspace getWorkspace() {
+<span class="fc" id="L93">        return workspace;</span>
+    }
+
+    @Override
+    public void setWorkspace(Workspace workspace) {
+<span class="fc" id="L98">        this.workspace = workspace;</span>
+<span class="fc" id="L99">    }</span>
+
+
+    @Override
+    public String toString() {
+<span class="nc" id="L104">        return &quot;Client{&quot; + &quot;id=&quot; + id + &quot;, name=&quot; + name + &quot;, hourlyRate=&quot; + hourlyRate + &quot;, currency=&quot; + currency</span>
+                + &quot;, notes=&quot; + notes + &quot;, workspace=&quot; + workspace + '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        if (obj == null) {</span>
+<span class="nc" id="L111">            return false;</span>
+        }
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (getClass() != obj.getClass()) {</span>
+<span class="nc" id="L114">            return false;</span>
+        }
+<span class="nc" id="L116">        final ProjectClient other = (ProjectClient) obj;</span>
+<span class="nc bnc" id="L117" title="All 6 branches missed.">        if (this.id != other.id &amp;&amp; (this.id == null || !this.id.equals(other.id))) {</span>
+<span class="nc" id="L118">            return false;</span>
+        }
+<span class="nc" id="L120">        return true;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L125">        int hash = 7;</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        hash = 71 * hash + (this.id != null ? this.id.hashCode() : 0);</span>
+<span class="nc" id="L127">        return hash;</span>
+    }
+
+    public Long getWorkspaceId() {
+<span class="fc" id="L131">        return workspaceId;</span>
+    }
+
+    public void setWorkspaceId(Long workspaceId) {
+<span class="fc" id="L135">        this.workspaceId = workspaceId;</span>
+<span class="fc" id="L136">    }</span>
+
+    @Override
+    public ProjectClient clone() {
+<span class="fc" id="L140">        ProjectClient cl = new ProjectClient();</span>
+<span class="fc" id="L141">        cl.id = id;</span>
+<span class="fc" id="L142">        cl.name = name;</span>
+<span class="fc" id="L143">        cl.hourlyRate = hourlyRate;</span>
+<span class="fc" id="L144">        cl.currency = currency;</span>
+<span class="fc" id="L145">        cl.workspace = workspace;</span>
+<span class="fc" id="L146">        cl.notes = notes;</span>
+<span class="fc" id="L147">        cl.workspaceId = workspaceId;</span>
+<span class="fc" id="L148">        return cl;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>

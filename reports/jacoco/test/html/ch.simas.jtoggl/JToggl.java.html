@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>JToggl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jtoggl</a> &gt; <a href="index.source.html" class="el_package">ch.simas.jtoggl</a> &gt; <span class="el_source">JToggl.java</span></div><h1>JToggl.java</h1><pre class="source lang-java linenums">/*
+ * jtoggl - Java Wrapper for Toggl REST API https://www.toggl.com/public/api
+ *
+ * Copyright (C) 2011 by simas GmbH, Moosentli 7, 3235 Erlach, Switzerland
+ * http://www.simas.ch
+ * 
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ch.simas.jtoggl;
+
+import ch.simas.jtoggl.domain.*;
+import ch.simas.jtoggl.util.DelayFilter;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import jersey.repackaged.com.google.common.collect.ImmutableMap;
+import org.glassfish.hk2.api.Descriptor;
+import org.glassfish.hk2.api.Filter;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.glassfish.jersey.filter.LoggingFilter;
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+import org.joda.time.format.ISODateTimeFormat;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.Produces;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Provider;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+/**
+ * API Class for Toggl REST API.
+ *
+ * @author Simon Martinelli
+ */
+public class JToggl {
+
+    /**
+     * Root URL for API.
+     */
+    public static final String API_ROOT = &quot;https://www.toggl.com/api&quot;;
+    /**
+     * API version.
+     */
+    public static final int API_VERSION = 8;
+
+    /**
+     * Root URL with version.
+     */
+<span class="fc" id="L79">    public static final String API_BASE = String.format(&quot;%s/v%d/&quot;, API_ROOT, API_VERSION);</span>
+
+    private static final String PLACEHOLDER = &quot;{0}&quot;;
+    private static final String SIMPLE_ID_PATH = &quot;/&quot; + PLACEHOLDER;
+
+<span class="fc" id="L84">    private final static String TIME_ENTRIES = API_BASE + &quot;time_entries&quot;;</span>
+<span class="fc" id="L85">    private final static String TIME_ENTRY_BY_ID = TIME_ENTRIES + SIMPLE_ID_PATH;</span>
+<span class="fc" id="L86">    private final static String TIME_ENTRY_CURRENT = TIME_ENTRIES + &quot;/current&quot;;</span>
+<span class="fc" id="L87">    private final static String TIME_ENTRY_START = TIME_ENTRIES + &quot;/start&quot;;</span>
+<span class="fc" id="L88">    private final static String TIME_ENTRY_STOP = TIME_ENTRIES + SIMPLE_ID_PATH + &quot;/stop&quot;;</span>
+
+<span class="fc" id="L90">    private final static String WORKSPACES = API_BASE + &quot;workspaces&quot;;</span>
+<span class="fc" id="L91">    private final static String WORKSPACE_BY_ID = WORKSPACES + SIMPLE_ID_PATH;</span>
+<span class="fc" id="L92">    private final static String WORKSPACE_USERS = WORKSPACE_BY_ID + &quot;/users&quot;;</span>
+<span class="fc" id="L93">    private final static String WORKSPACE_PROJECTS = WORKSPACE_BY_ID + &quot;/projects&quot;;</span>
+<span class="fc" id="L94">    private final static String WORKSPACE_TASKS = WORKSPACE_BY_ID + &quot;/tasks&quot;;</span>
+<span class="fc" id="L95">    private final static String WORKSPACE_CLIENTS = WORKSPACE_BY_ID + &quot;/clients&quot;;</span>
+
+<span class="fc" id="L97">    private final static String CLIENTS = API_BASE + &quot;clients&quot;;</span>
+<span class="fc" id="L98">    private final static String CLIENT_BY_ID = CLIENTS + SIMPLE_ID_PATH;</span>
+
+<span class="fc" id="L100">    private final static String PROJECTS = API_BASE + &quot;projects&quot;;</span>
+<span class="fc" id="L101">    private final static String PROJECT_BY_ID = PROJECTS + SIMPLE_ID_PATH;</span>
+
+<span class="fc" id="L103">    private final static String TASKS = API_BASE + &quot;tasks&quot;;</span>
+<span class="fc" id="L104">    private final static String TASK_BY_ID = TASKS + SIMPLE_ID_PATH;</span>
+
+<span class="fc" id="L106">    private final static String TAGS = API_BASE + &quot;tags&quot;;</span>
+
+<span class="fc" id="L108">    private final static String PROJECT_USERS = WORKSPACES + &quot;/673279/project_users&quot;;</span>
+<span class="fc" id="L109">    private final static String GET_CURRENT_USER = API_BASE + &quot;me&quot;;</span>
+    private final String user;
+    private final String password;
+
+<span class="fc" id="L113">    private boolean log = false;</span>
+<span class="fc" id="L114">    private long throttlePeriod = 0L;</span>
+    private Client client;
+
+    /**
+     * Constructor to create an instance of JToggl that uses an api token to connect to toggl.
+     *
+     * @param apiToken the api token to connect to toggl
+     */
+    public JToggl(String apiToken) {
+<span class="nc" id="L123">        this(apiToken, &quot;api_token&quot;);</span>
+<span class="nc" id="L124">    }</span>
+
+    /**
+     * Constructor to create an instance of JToggl.
+     *
+     * @param user     username or api_token
+     * @param password password or string &quot;api_token&quot;
+     */
+<span class="fc" id="L132">    public JToggl(String user, String password) {</span>
+<span class="fc" id="L133">        this.user = user;</span>
+<span class="fc" id="L134">        this.password = password;</span>
+<span class="fc" id="L135">    }</span>
+
+    /**
+     * Get latest time entries.
+     *
+     * @return list of {@link TimeEntry}
+     */
+    public List&lt;TimeEntry&gt; getTimeEntries() {
+<span class="fc" id="L143">        return this.getTimeEntries(null, null);</span>
+    }
+
+    /**
+     * Get time entries started in a specific time range.
+     * By default, the number of days from the field &quot;How long are time entries
+     * visible in the timer&quot; under &quot;My settings&quot; in Toggl is used to determine
+     * which time entries to return but you can specify another date range using
+     * start_date and end_date parameters.
+     *
+     * @param startDate
+     * @param endDate
+     * @return list of {@link TimeEntry}
+     */
+    public List&lt;TimeEntry&gt; getTimeEntries(LocalDate startDate, LocalDate endDate) {
+
+<span class="pc bpc" id="L159" title="1 of 4 branches missed.">        return prepareRequest(TIME_ENTRIES,</span>
+                (startDate != null &amp;&amp; endDate != null) ? ImmutableMap.of(
+                        &quot;start_date&quot;, ISODateTimeFormat.dateTime().print(startDate.toDateTimeAtStartOfDay()),
+                        &quot;end_date&quot;, ISODateTimeFormat.dateTime().print(endDate.toDateTimeAtStartOfDay().plus(Days
+                                .days(1))))
+<span class="fc" id="L164">                        : null).get(new GenericType&lt;List&lt;TimeEntry&gt;&gt;() {</span>
+        });
+    }
+
+    /**
+     * Get a time entry.
+     *
+     * @param id
+     * @return TimeEntry or null if no Entry is found.
+     */
+    public TimeEntry getTimeEntry(Long id) {
+
+<span class="fc" id="L176">        return prepareRequest(TIME_ENTRY_BY_ID.replace(PLACEHOLDER, id.toString()))</span>
+<span class="fc" id="L177">                .get(new GenericType&lt;ResponseDataWrapper&lt;TimeEntry&gt;&gt;() {</span>
+                }).getData();
+    }
+
+    /**
+     * Get running time entry
+     *
+     * @return The running time entry or null if none
+     */
+    public TimeEntry getCurrentTimeEntry() {
+        try {
+<span class="fc" id="L188">            return prepareRequest(TIME_ENTRY_CURRENT).get(new GenericType&lt;ResponseDataWrapper&lt;TimeEntry&gt;&gt;() {</span>
+            }).getData();
+<span class="nc" id="L190">        } catch (ProcessingException e) {</span>
+<span class="nc" id="L191">            return null;</span>
+        }
+    }
+
+    /**
+     * Create a new time entry.
+     *
+     * @param timeEntry
+     * @return created {@link TimeEntry}
+     */
+    public TimeEntry createTimeEntry(TimeEntry timeEntry) {
+<span class="fc" id="L202">        return prepareRequest(TIME_ENTRIES)</span>
+<span class="fc" id="L203">                .post(Entity.json(stripe(timeEntry.clone())), new GenericType&lt;ResponseDataWrapper&lt;TimeEntry&gt;&gt;() {</span>
+                }).getData();
+    }
+
+    /**
+     * Create and then start the given time entry.
+     *
+     * @param timeEntry the time entry to start
+     * @return created {@link TimeEntry}
+     */
+    public TimeEntry startTimeEntry(TimeEntry timeEntry) {
+
+<span class="fc" id="L215">        return prepareRequest(TIME_ENTRY_START)</span>
+<span class="fc" id="L216">                .post(Entity.json(stripe(timeEntry)), new GenericType&lt;ResponseDataWrapper&lt;TimeEntry&gt;&gt;() {</span>
+                }).getData();
+    }
+
+    /**
+     * Stop the given time entry.
+     *
+     * @param timeEntry to time entry to stop
+     * @return the stopped {@link TimeEntry}
+     */
+    public TimeEntry stopTimeEntry(TimeEntry timeEntry) {
+
+<span class="fc" id="L228">        return prepareRequest(TIME_ENTRY_STOP.replace(PLACEHOLDER, timeEntry.getId().toString()))</span>
+<span class="fc" id="L229">                .put(Entity.json(stripe(timeEntry.clone())), new GenericType&lt;ResponseDataWrapper&lt;TimeEntry&gt;&gt;() {</span>
+                }).getData();
+    }
+
+    /**
+     * Update a time entry.
+     *
+     * @param timeEntry
+     * @return created {@link TimeEntry}
+     */
+    public TimeEntry updateTimeEntry(TimeEntry timeEntry) {
+
+<span class="fc" id="L241">        return prepareRequest(TIME_ENTRY_BY_ID.replace(PLACEHOLDER, timeEntry.getId().toString()))</span>
+<span class="fc" id="L242">                .put(Entity.json(stripe(timeEntry.clone())), new GenericType&lt;ResponseDataWrapper&lt;TimeEntry&gt;&gt;() {</span>
+                }).getData();
+    }
+
+    /**
+     * Destroy a time entry.
+     *
+     * @param id
+     */
+    public void destroyTimeEntry(Long id) {
+
+<span class="fc" id="L253">        prepareRequest(TIME_ENTRY_BY_ID.replace(PLACEHOLDER, id.toString())).delete();</span>
+<span class="fc" id="L254">    }</span>
+
+    /**
+     * Destroy a project.
+     *
+     * @param id
+     */
+    public void destroyProject(Long id) {
+<span class="fc" id="L262">        prepareRequest(PROJECT_BY_ID.replace(PLACEHOLDER, id.toString())).delete();</span>
+<span class="fc" id="L263">    }</span>
+
+
+    /**
+     * Get workspaces.
+     *
+     * @return list of {@link Workspace}
+     */
+    public List&lt;Workspace&gt; getWorkspaces() {
+
+<span class="fc" id="L273">        return prepareRequest(WORKSPACES).get(new GenericType&lt;List&lt;Workspace&gt;&gt;() {</span>
+        });
+    }
+
+    /**
+     * Get clients.
+     *
+     * @return list of {@link ProjectClient}
+     */
+    public List&lt;ProjectClient&gt; getClients() {
+
+<span class="fc" id="L284">        return prepareRequest(CLIENTS).get(new GenericType&lt;List&lt;ProjectClient&gt;&gt;() {</span>
+        });
+    }
+
+    /**
+     * Create a new client.
+     *
+     * @param clientObject
+     * @return created {@link ProjectClient}
+     */
+    public ProjectClient createClient(ProjectClient clientObject) {
+<span class="fc" id="L295">        clientObject = clientObject.clone();</span>
+<span class="pc bpc" id="L296" title="1 of 2 branches missed.">        if (clientObject.getWorkspace() != null) {</span>
+<span class="fc" id="L297">            clientObject.setWorkspaceId(clientObject.getWorkspace().getId());</span>
+        }
+<span class="fc" id="L299">        clientObject.setWorkspace(null);</span>
+<span class="fc" id="L300">        return prepareRequest(CLIENTS).post(Entity.json(stripe(clientObject.clone())), new GenericType&lt;ResponseDataWrapper&lt;ProjectClient&gt;&gt;() {</span>
+        }).getData();
+    }
+
+    private static &lt;T extends Cloneable &amp; WithId&gt; T stripe(T clientObject) {
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">        if (clientObject instanceof WithWorkspace) {</span>
+<span class="fc" id="L306">            WithWorkspace ww = (WithWorkspace) clientObject;</span>
+<span class="fc bfc" id="L307" title="All 4 branches covered.">            if (((WithWorkspace) clientObject).getWorkspaceId() == null &amp;&amp; ((WithWorkspace) clientObject).getWorkspace() != null) {</span>
+<span class="fc" id="L308">                ww.setWorkspaceId(ww.getWorkspace().getId());</span>
+            }
+<span class="fc" id="L310">            ww.setWorkspace(null);</span>
+
+
+        }
+<span class="fc bfc" id="L314" title="All 2 branches covered.">        if (clientObject instanceof WithProject) {</span>
+<span class="fc" id="L315">            WithProject wp = (WithProject) clientObject;</span>
+<span class="fc bfc" id="L316" title="All 4 branches covered.">            if (((WithProject) clientObject).getProjectId() == null &amp;&amp; ((WithProject) clientObject).getProject() != null) {</span>
+<span class="fc" id="L317">                wp.setProjectId(wp.getProject().getId());</span>
+            }
+<span class="fc" id="L319">            wp.setProject(null);</span>
+        }
+<span class="pc bpc" id="L321" title="1 of 2 branches missed.">        if (clientObject instanceof WithUser) {</span>
+<span class="nc" id="L322">            WithUser wu = (WithUser) clientObject;</span>
+<span class="nc bnc" id="L323" title="All 4 branches missed.">            if (((WithUser) clientObject).getUserId() == null &amp;&amp; ((WithUser) clientObject).getUser() != null) {</span>
+<span class="nc" id="L324">                wu.setUserId(wu.getUser().getId());</span>
+            }
+<span class="nc" id="L326">            wu.setUser(null);</span>
+        }
+<span class="fc" id="L328">        return clientObject;</span>
+    }
+
+    /**
+     * Update a client.
+     *
+     * @param clientObject
+     * @return updated {@link ProjectClient}
+     */
+    public ProjectClient updateClient(ProjectClient clientObject) {
+
+<span class="fc" id="L339">        return prepareRequest(CLIENT_BY_ID.replace(PLACEHOLDER, clientObject.getId().toString()))</span>
+<span class="fc" id="L340">                .put(Entity.json(stripe(clientObject.clone())), new GenericType&lt;ResponseDataWrapper&lt;ProjectClient&gt;&gt;() {</span>
+                }).getData();
+    }
+
+    /**
+     * Destroy a client.
+     *
+     * @param id
+     */
+    public void destroyClient(Long id) {
+
+<span class="fc" id="L351">        prepareRequest(CLIENT_BY_ID.replace(PLACEHOLDER, id.toString())).delete(String.class);</span>
+<span class="fc" id="L352">    }</span>
+
+    /**
+     * Get projects.
+     *
+     * @return list of {@link Project}
+     */
+    public List&lt;Project&gt; getProjects() {
+<span class="fc" id="L360">        List&lt;Project&gt; projects = new ArrayList&lt;Project&gt;();</span>
+
+<span class="fc" id="L362">        List&lt;Workspace&gt; workspaces = getWorkspaces();</span>
+<span class="fc bfc" id="L363" title="All 2 branches covered.">        for (Workspace workspace : workspaces) {</span>
+<span class="fc" id="L364">            List&lt;Project&gt; workspaceProjects = getWorkspaceProjects(workspace.getId());</span>
+<span class="fc bfc" id="L365" title="All 2 branches covered.">            if (workspaceProjects == null) {</span>
+<span class="fc" id="L366">                return null;</span>
+            }
+<span class="fc bfc" id="L368" title="All 2 branches covered.">            for (Project project : workspaceProjects) {</span>
+<span class="fc" id="L369">                project.setWorkspace(workspace);</span>
+<span class="fc" id="L370">            }</span>
+<span class="fc" id="L371">            projects.addAll(workspaceProjects);</span>
+<span class="fc" id="L372">        }</span>
+
+<span class="fc" id="L374">        return projects;</span>
+    }
+
+    /**
+     * Create a new project.
+     *
+     * @param project
+     * @return created {@link Project}
+     */
+    public Project createProject(Project project) {
+
+<span class="fc" id="L385">        return prepareRequest(PROJECTS).post(Entity.json(stripe(project.clone())), new GenericType&lt;ResponseDataWrapper&lt;Project&gt;&gt;() {</span>
+        }).getData();
+    }
+
+    /**
+     * Update a project.
+     *
+     * @param project
+     * @return updated {@link Project}
+     */
+    public Project updateProject(Project project) {
+
+<span class="fc" id="L397">        return prepareRequest(PROJECT_BY_ID.replace(PLACEHOLDER, project.getId().toString()))</span>
+<span class="fc" id="L398">                .put(Entity.json(stripe(project.clone())), new GenericType&lt;ResponseDataWrapper&lt;Project&gt;&gt;() {</span>
+                }).getData();
+    }
+
+    /**
+     * Create a new project user.
+     *
+     * @param projectUser
+     * @return created {@link ProjectUser}
+     */
+    public ProjectUser createProjectUser(ProjectUser projectUser) {
+
+<span class="nc" id="L410">        return prepareRequest(PROJECT_USERS)</span>
+<span class="nc" id="L411">                .post(Entity.json(stripe(projectUser.clone())), new GenericType&lt;ResponseDataWrapper&lt;ProjectUser&gt;&gt;() {</span>
+                }).getData();
+    }
+
+    /**
+     * Get tasks
+     * The user field may contain the users data who has been assigned with the task.
+     *
+     * @return list of {@link Task}
+     */
+    public List&lt;Task&gt; getTasks() {
+<span class="nc" id="L422">        List&lt;Task&gt; tasks = new ArrayList&lt;Task&gt;();</span>
+
+<span class="nc" id="L424">        List&lt;Workspace&gt; workspaces = getWorkspaces();</span>
+<span class="nc bnc" id="L425" title="All 2 branches missed.">        for (Workspace workspace : workspaces) {</span>
+<span class="nc" id="L426">            List&lt;Task&gt; workspaceTasks = getActiveWorkspaceTasks(workspace.getId());</span>
+<span class="nc bnc" id="L427" title="All 2 branches missed.">            if (workspaceTasks != null) {</span>
+<span class="nc" id="L428">                tasks.addAll(workspaceTasks);</span>
+            }
+<span class="nc" id="L430">        }</span>
+
+<span class="nc" id="L432">        return tasks;</span>
+    }
+
+    /**
+     * Create a new task.
+     *
+     * @param task
+     * @return created {@link Task}
+     */
+    public Task createTask(Task task) {
+
+<span class="nc" id="L443">        return prepareRequest(TASKS)</span>
+<span class="nc" id="L444">                .post(Entity.json(stripe(task.clone())), new GenericType&lt;ResponseDataWrapper&lt;Task&gt;&gt;() {</span>
+                }).getData();
+    }
+
+    /**
+     * Update a task.
+     *
+     * @param task
+     * @return updated {@link Task}
+     */
+    public Task updateTask(Task task) {
+
+<span class="nc" id="L456">        return prepareRequest(TASK_BY_ID.replace(PLACEHOLDER, task.getId().toString()))</span>
+<span class="nc" id="L457">                .put(Entity.json(stripe(task.clone())), new GenericType&lt;ResponseDataWrapper&lt;Task&gt;&gt;() {</span>
+                }).getData();
+    }
+
+    /**
+     * Destroy a task.
+     *
+     * @param id
+     */
+    public void destroyTask(Long id) {
+
+<span class="nc" id="L468">        prepareRequest(TASK_BY_ID.replace(PLACEHOLDER, id.toString()))</span>
+                .delete();
+<span class="nc" id="L470">    }</span>
+
+    /**
+     * Get current user.
+     *
+     * @return current user {@link User}
+     */
+    public User getCurrentUser() {
+<span class="fc" id="L478">        return prepareRequest(GET_CURRENT_USER).get(new GenericType&lt;ResponseDataWrapper&lt;User&gt;&gt;() {</span>
+        }).getData();
+    }
+
+    /**
+     * Get current user, including user's data.
+     * It is possible to get the user's time entries, projects, tasks, tags,
+     * workspaces and clients when requesting the current user's data.
+     *
+     * @return current user {@link User}
+     */
+    public User getCurrentUserWithRelatedData() {
+<span class="nc" id="L490">        throw new UnsupportedOperationException();</span>
+    }
+
+    /**
+     * All users in the workspace with the given id.
+     *
+     * @param workspaceId id of the workspace
+     * @return all users
+     */
+    public List&lt;User&gt; getWorkspaceUsers(long workspaceId) {
+
+<span class="fc" id="L501">        return prepareRequest(WORKSPACE_USERS.replace(PLACEHOLDER, String.valueOf(workspaceId)))</span>
+<span class="fc" id="L502">                .get(new GenericType&lt;List&lt;User&gt;&gt;() {</span>
+                });
+    }
+
+    /**
+     * All projects in the workspace with the given id.
+     *
+     * @param workspaceId id of the workspace
+     * @return all projects
+     */
+    public List&lt;Project&gt; getWorkspaceProjects(long workspaceId) {
+
+<span class="fc" id="L514">        return prepareRequest(WORKSPACE_PROJECTS.replace(PLACEHOLDER, String.valueOf(workspaceId)))</span>
+<span class="fc" id="L515">                .get(new GenericType&lt;List&lt;Project&gt;&gt;() {</span>
+                });
+    }
+
+    /**
+     * All clients in the workspace with the given id.
+     *
+     * @param workspaceId id of the workspace
+     * @return all clients
+     */
+    public List&lt;ProjectClient&gt; getWorkspaceClients(long workspaceId) {
+
+<span class="fc" id="L527">        return prepareRequest(WORKSPACE_CLIENTS.replace(PLACEHOLDER, String.valueOf(workspaceId)))</span>
+<span class="fc" id="L528">                .get(new GenericType&lt;List&lt;ProjectClient&gt;&gt;() {</span>
+                });
+    }
+
+    /**
+     * All active tasks in the workspace with the given id.
+     *
+     * @param workspaceId id of the workspace
+     * @return all tasks
+     */
+    public List&lt;Task&gt; getActiveWorkspaceTasks(long workspaceId) {
+
+<span class="nc" id="L540">        return prepareRequest(WORKSPACE_TASKS.replace(PLACEHOLDER, String.valueOf(workspaceId)))</span>
+<span class="nc" id="L541">                .get(new GenericType&lt;List&lt;Task&gt;&gt;() {</span>
+                });
+    }
+
+    /**
+     * All users in all workspaces.
+     *
+     * @return all users in all workspaces
+     */
+    public List&lt;User&gt; getUsers() {
+<span class="fc" id="L551">        HashSet&lt;User&gt; result = new HashSet&lt;User&gt;();</span>
+<span class="fc" id="L552">        List&lt;Workspace&gt; workspaces = getWorkspaces();</span>
+<span class="fc bfc" id="L553" title="All 2 branches covered.">        for (Workspace workspace : workspaces) {</span>
+<span class="fc" id="L554">            List&lt;User&gt; workspaceUsers = getWorkspaceUsers(workspace.getId());</span>
+<span class="fc" id="L555">            result.addAll(workspaceUsers);</span>
+<span class="fc" id="L556">        }</span>
+<span class="fc" id="L557">        return new ArrayList&lt;User&gt;(result);</span>
+    }
+
+    /**
+     * Switch logging on.
+     */
+    public void switchLoggingOn() {
+<span class="fc" id="L564">        this.log = true;</span>
+<span class="fc" id="L565">    }</span>
+
+    /**
+     * Switch logging off.
+     */
+    public void switchLoggingOff() {
+<span class="nc" id="L571">        this.log = false;</span>
+<span class="nc" id="L572">    }</span>
+
+    /**
+     * Prepares instance of API client and returns it's instance. If client already created, existing instance is returned.
+     *
+     * @return Instance of API client.
+     */
+    protected Client prepareApiClient() {
+<span class="fc bfc" id="L580" title="All 2 branches covered.">        if (client == null) {</span>
+<span class="fc" id="L581">            ClientConfig clientConfig = new ClientConfig();</span>
+<span class="fc" id="L582">            clientConfig.property(ClientProperties.CONNECT_TIMEOUT, 30 * 1000);</span>
+<span class="fc" id="L583">            clientConfig.property(ClientProperties.READ_TIMEOUT, 30 * 1000);</span>
+<span class="fc" id="L584">            clientConfig.register(JacksonFeature.class);</span>
+
+<span class="fc" id="L586">            client = JerseyClientBuilder.createClient(clientConfig);</span>
+<span class="fc" id="L587">            client.register(HttpAuthenticationFeature.basic(user, password));</span>
+<span class="fc" id="L588">            client.register(JacksonConfigurator.class);</span>
+<span class="pc bpc" id="L589" title="1 of 2 branches missed.">            if (log) {</span>
+<span class="fc" id="L590">                LoggingFilter loggingFilter = new LoggingFilter(Logger.getLogger(LoggingFilter.class.getName()), true);</span>
+<span class="fc" id="L591">                client.register(loggingFilter);</span>
+            }
+<span class="pc bpc" id="L593" title="1 of 2 branches missed.">            if (throttlePeriod &gt; 0L) {</span>
+<span class="fc" id="L594">                client.register(new DelayFilter(throttlePeriod));</span>
+            }
+        }
+<span class="fc" id="L597">        return client;</span>
+    }
+
+    /**
+     * Json serialize/deserialize configuration.
+     */
+    @Provider
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public static class JacksonConfigurator extends JacksonJsonProvider implements ContextResolver&lt;ObjectMapper&gt; {
+
+<span class="fc" id="L608">        private ObjectMapper mapper = new ObjectMapper();</span>
+
+<span class="fc" id="L610">        public JacksonConfigurator() {</span>
+
+<span class="fc" id="L612">            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);</span>
+<span class="fc" id="L613">            mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);</span>
+<span class="fc" id="L614">            mapper.disable(DeserializationFeature.UNWRAP_ROOT_VALUE);</span>
+<span class="fc" id="L615">            mapper.disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)</span>
+                    .disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES)
+                    .disable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY)
+                    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            ;
+
+<span class="fc" id="L621">        }</span>
+
+        @Override
+        public ObjectMapper getContext(Class&lt;?&gt; arg0) {
+<span class="fc" id="L625">            return mapper;</span>
+        }
+
+    }
+
+    public long getThrottlePeriod() {
+<span class="nc" id="L631">        return throttlePeriod;</span>
+    }
+
+    public void setThrottlePeriod(long throttlePeriod) {
+<span class="fc" id="L635">        this.throttlePeriod = throttlePeriod;</span>
+<span class="fc" id="L636">    }</span>
+
+    private Invocation.Builder prepareRequest(String url, Map&lt;String, String&gt; params) {
+
+<span class="fc" id="L640">        WebTarget target = prepareApiClient().target(url);</span>
+<span class="fc bfc" id="L641" title="All 2 branches covered.">        if (params != null) {</span>
+<span class="fc bfc" id="L642" title="All 2 branches covered.">            for (Map.Entry&lt;String, String&gt; entry : params.entrySet()) {</span>
+<span class="fc" id="L643">                target = target.queryParam(entry.getKey(), entry.getValue());</span>
+<span class="fc" id="L644">            }</span>
+        }
+<span class="fc" id="L646">        return target.request(MediaType.APPLICATION_JSON_TYPE);</span>
+    }
+
+
+    private Invocation.Builder prepareRequest(String url) {
+<span class="fc" id="L651">        return prepareRequest(url, null);</span>
+    }
+
+    /**
+     * Hack feature to allow use Jersey on Android.
+     * On android, register this feature to new client.
+     */
+<span class="nc" id="L658">    public static class AndroidFriendlyFeature implements Feature {</span>
+
+        @Override
+        public boolean configure(FeatureContext context) {
+<span class="nc" id="L662">            context.register(new AbstractBinder() {</span>
+                @Override
+                protected void configure() {
+<span class="nc" id="L665">                    addUnbindFilter(new Filter() {</span>
+                        @Override
+                        public boolean matches(Descriptor d) {
+<span class="nc" id="L668">                            String implClass = d.getImplementation();</span>
+<span class="nc bnc" id="L669" title="All 4 branches missed.">                            return implClass.startsWith(</span>
+                                    &quot;org.glassfish.jersey.message.internal.DataSource&quot;)
+                                    || implClass.startsWith(
+                                    &quot;org.glassfish.jersey.message.internal.RenderedImage&quot;);
+                        }
+                    });
+<span class="nc" id="L675">                }</span>
+            });
+<span class="nc" id="L677">            return true;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>
